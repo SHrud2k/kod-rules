@@ -5,29 +5,29 @@
 <title>Правила проекта — Kill OR Die DayZ | RP</title>
 <style>
   :root {
-    --bg: #0e110e;
-    --panel: #161c16;
-    --panel-2: #1c241c;
-    --text: #d8e0d5;
-    --muted: #93a191;
-    --accent: #74c378;
-    --accent-deep: #2c5f2d;
-    --border: #2b352b;
+    /* Discord dark theme palette */
+    --bg: #313338;          /* chat background */
+    --panel: #2b2d31;       /* embeds / channel list */
+    --panel-2: #383a40;     /* hover */
+    --text: #dbdee1;
+    --heading: #f2f3f5;
+    --muted: #949ba4;
+    --accent: #5865f2;      /* blurple */
+    --accent-deep: #4752c4; /* blurple pressed */
+    --accent-text: #949cf7; /* brand text on dark */
+    --link: #00a8fc;
+    --border: #3f4147;
     --sidebar-w: 280px;
   }
   * { box-sizing: border-box; }
   html { scroll-behavior: smooth; scroll-padding-top: 24px; }
   body {
-    font-family: "Segoe UI", Arial, sans-serif;
+    font-family: "gg sans", "Segoe UI", "Noto Sans", Arial, sans-serif;
     color: var(--text);
     line-height: 1.55;
     margin: 0;
     display: flex;
-    background:
-      radial-gradient(1100px 600px at 85% -10%, rgba(116, 195, 120, .07), transparent 60%),
-      radial-gradient(900px 500px at -10% 35%, rgba(116, 195, 120, .05), transparent 55%),
-      var(--bg);
-    background-attachment: fixed;
+    background: var(--bg);
   }
   .page {
     flex: 1;
@@ -51,7 +51,7 @@
     scrollbar-width: thin;
   }
   aside.sidenav .side-title {
-    color: var(--accent);
+    color: var(--heading);
     font-weight: 600;
     font-size: 15px;
     padding: 2px 10px 10px;
@@ -61,16 +61,16 @@
   .nav-controls { display: flex; gap: 6px; padding: 0 6px 12px; }
   .nav-controls button {
     flex: 1;
-    background: var(--panel-2);
-    color: var(--muted);
-    border: 1px solid var(--border);
-    border-radius: 6px;
-    padding: 5px 6px;
+    background: var(--accent);
+    color: #fff;
+    border: none;
+    border-radius: 3px;
+    padding: 6px 6px;
     font-size: 12px;
     font-family: inherit;
     cursor: pointer;
   }
-  .nav-controls button:hover { color: var(--accent); border-color: var(--accent-deep); }
+  .nav-controls button:hover { background: var(--accent-deep); }
   aside.sidenav nav a {
     display: block;
     color: var(--muted);
@@ -82,19 +82,19 @@
   }
   aside.sidenav nav a:hover { color: var(--text); background: var(--panel-2); }
   aside.sidenav nav a.active {
-    color: var(--accent);
-    background: rgba(116, 195, 120, .10);
+    color: var(--heading);
+    background: #404249;
     border-left-color: var(--accent);
   }
   @media (max-width: 1050px) { aside.sidenav { display: none; } }
   /* ---------- header & top toc ---------- */
   header.title {
     text-align: center;
-    border-bottom: 3px solid var(--accent-deep);
+    border-bottom: 3px solid var(--accent);
     padding-bottom: 20px;
     margin-bottom: 28px;
   }
-  header.title h1 { margin: 0 0 6px; font-size: 30px; color: var(--accent); }
+  header.title h1 { margin: 0 0 6px; font-size: 30px; color: var(--heading); }
   header.title .sub { color: var(--muted); font-size: 14px; }
   nav.toc {
     background: var(--panel);
@@ -105,19 +105,19 @@
     columns: 2;
     column-gap: 40px;
   }
-  nav.toc h2 { margin: 0 0 10px; font-size: 16px; column-span: all; color: var(--accent); }
-  nav.toc a { display: block; color: var(--text); text-decoration: none; padding: 2px 0; font-size: 14px; }
-  nav.toc a:hover { color: var(--accent); text-decoration: underline; }
+  nav.toc h2 { margin: 0 0 10px; font-size: 16px; column-span: all; color: var(--heading); }
+  nav.toc a { display: block; color: var(--link); text-decoration: none; padding: 2px 0; font-size: 14px; }
+  nav.toc a:hover { text-decoration: underline; }
   /* ---------- collapsible sections ---------- */
   h2.section {
     display: flex;
     justify-content: space-between;
     align-items: center;
     gap: 12px;
-    color: var(--accent);
-    background: linear-gradient(180deg, var(--panel-2), var(--panel));
+    color: var(--heading);
+    background: var(--panel);
     border: 1px solid var(--border);
-    border-left: 4px solid var(--accent-deep);
+    border-left: 4px solid var(--accent);
     padding: 10px 14px;
     border-radius: 6px;
     font-size: 20px;
@@ -125,7 +125,7 @@
     cursor: pointer;
     user-select: none;
   }
-  h2.section:hover { border-color: var(--accent-deep); }
+  h2.section:hover { background: var(--panel-2); }
   h2.section::after {
     content: "▾";
     color: var(--muted);
@@ -135,7 +135,7 @@
   h2.section.collapsed::after { transform: rotate(-90deg); }
   .section-body { padding-top: 4px; margin-bottom: 10px; }
   h3 {
-    color: var(--accent);
+    color: var(--heading);
     border-bottom: 2px solid var(--border);
     padding-bottom: 4px;
     margin: 30px 0 12px;
@@ -145,18 +145,18 @@
   .rule {
     background: var(--panel);
     border: 1px solid var(--border);
-    border-left: 4px solid var(--accent-deep);
+    border-left: 4px solid var(--accent);
     border-radius: 0 6px 6px 0;
     padding: 10px 16px;
     margin: 10px 0;
   }
-  .rule b.num { color: var(--accent); }
+  .rule b.num { color: var(--accent-text); }
   .rule p { margin: 6px 0; }
   .rule ul { margin: 6px 0; padding-left: 22px; }
   .note {
-    background: #201d10;
-    border: 1px solid #585026;
-    border-left: 4px solid #d4a017;
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-left: 4px solid #f0b232;
     border-radius: 0 6px 6px 0;
     padding: 10px 16px;
     margin: 10px 0;
@@ -167,11 +167,11 @@
     body { display: block; background: #fff; color: #1a1a1a; }
     aside.sidenav { display: none !important; }
     .page { padding: 0; max-width: none; font-size: 11pt; }
-    header.title h1, nav.toc h2, h3, .rule b.num { color: #2c5f2d; }
+    header.title h1, nav.toc h2, h3, .rule b.num { color: #4752c4; }
     nav.toc { background: #f6f8f6; border-color: #d8ded8; columns: 2; }
     nav.toc a, a { color: #1a1a1a; }
     h2.section {
-      color: #fff; background: #2c5f2d; border: none; cursor: auto;
+      color: #fff; background: #5865f2; border: none; cursor: auto;
       page-break-after: avoid; break-after: avoid;
       -webkit-print-color-adjust: exact; print-color-adjust: exact;
     }
@@ -182,7 +182,7 @@
       page-break-inside: avoid;
       -webkit-print-color-adjust: exact; print-color-adjust: exact;
     }
-    .rule { background: #f6f8f6; border-color: #d8ded8; border-left-color: #2c5f2d; }
+    .rule { background: #f6f8f6; border-color: #d8ded8; border-left-color: #5865f2; }
     .note { background: #fff8e6; border-color: #e8d9a8; border-left-color: #d4a017; }
     .example { color: #666; }
     .pb { page-break-before: always; }
