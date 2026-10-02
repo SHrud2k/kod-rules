@@ -5,31 +5,99 @@
 <title>Правила проекта — Kill OR Die DayZ | RP</title>
 <style>
   :root {
-    --accent: #2c5f2d;
-    --text: #1a1a1a;
-    --muted: #666;
-    --rule-bg: #f6f8f6;
-    --border: #d8ded8;
+    --bg: #0e110e;
+    --panel: #161c16;
+    --panel-2: #1c241c;
+    --text: #d8e0d5;
+    --muted: #93a191;
+    --accent: #74c378;
+    --accent-deep: #2c5f2d;
+    --border: #2b352b;
+    --sidebar-w: 280px;
   }
   * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; scroll-padding-top: 24px; }
   body {
     font-family: "Segoe UI", Arial, sans-serif;
     color: var(--text);
     line-height: 1.55;
-    max-width: 860px;
+    margin: 0;
+    display: flex;
+    background:
+      radial-gradient(1100px 600px at 85% -10%, rgba(116, 195, 120, .07), transparent 60%),
+      radial-gradient(900px 500px at -10% 35%, rgba(116, 195, 120, .05), transparent 55%),
+      var(--bg);
+    background-attachment: fixed;
+  }
+  .page {
+    flex: 1;
+    min-width: 0;
+    max-width: 900px;
     margin: 0 auto;
     padding: 32px 40px 80px;
   }
+  /* ---------- sidebar (built by JS) ---------- */
+  aside.sidenav {
+    position: sticky;
+    top: 0;
+    align-self: flex-start;
+    flex: 0 0 var(--sidebar-w);
+    width: var(--sidebar-w);
+    height: 100vh;
+    overflow-y: auto;
+    background: var(--panel);
+    border-right: 1px solid var(--border);
+    padding: 20px 14px 30px;
+    scrollbar-width: thin;
+  }
+  aside.sidenav .side-title {
+    color: var(--accent);
+    font-weight: 600;
+    font-size: 15px;
+    padding: 2px 10px 10px;
+    border-bottom: 1px solid var(--border);
+    margin-bottom: 10px;
+  }
+  .nav-controls { display: flex; gap: 6px; padding: 0 6px 12px; }
+  .nav-controls button {
+    flex: 1;
+    background: var(--panel-2);
+    color: var(--muted);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 5px 6px;
+    font-size: 12px;
+    font-family: inherit;
+    cursor: pointer;
+  }
+  .nav-controls button:hover { color: var(--accent); border-color: var(--accent-deep); }
+  aside.sidenav nav a {
+    display: block;
+    color: var(--muted);
+    text-decoration: none;
+    font-size: 13px;
+    padding: 5px 10px;
+    border-radius: 6px;
+    border-left: 2px solid transparent;
+  }
+  aside.sidenav nav a:hover { color: var(--text); background: var(--panel-2); }
+  aside.sidenav nav a.active {
+    color: var(--accent);
+    background: rgba(116, 195, 120, .10);
+    border-left-color: var(--accent);
+  }
+  @media (max-width: 1050px) { aside.sidenav { display: none; } }
+  /* ---------- header & top toc ---------- */
   header.title {
     text-align: center;
-    border-bottom: 3px solid var(--accent);
+    border-bottom: 3px solid var(--accent-deep);
     padding-bottom: 20px;
     margin-bottom: 28px;
   }
   header.title h1 { margin: 0 0 6px; font-size: 30px; color: var(--accent); }
   header.title .sub { color: var(--muted); font-size: 14px; }
   nav.toc {
-    background: var(--rule-bg);
+    background: var(--panel);
     border: 1px solid var(--border);
     border-radius: 8px;
     padding: 18px 26px;
@@ -37,17 +105,35 @@
     columns: 2;
     column-gap: 40px;
   }
-  nav.toc h2 { margin: 0 0 10px; font-size: 16px; column-span: all; }
+  nav.toc h2 { margin: 0 0 10px; font-size: 16px; column-span: all; color: var(--accent); }
   nav.toc a { display: block; color: var(--text); text-decoration: none; padding: 2px 0; font-size: 14px; }
   nav.toc a:hover { color: var(--accent); text-decoration: underline; }
+  /* ---------- collapsible sections ---------- */
   h2.section {
-    color: #fff;
-    background: var(--accent);
-    padding: 8px 14px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+    color: var(--accent);
+    background: linear-gradient(180deg, var(--panel-2), var(--panel));
+    border: 1px solid var(--border);
+    border-left: 4px solid var(--accent-deep);
+    padding: 10px 14px;
     border-radius: 6px;
     font-size: 20px;
-    margin: 44px 0 18px;
+    margin: 26px 0 0;
+    cursor: pointer;
+    user-select: none;
   }
+  h2.section:hover { border-color: var(--accent-deep); }
+  h2.section::after {
+    content: "▾";
+    color: var(--muted);
+    font-size: 15px;
+    transition: transform .15s ease;
+  }
+  h2.section.collapsed::after { transform: rotate(-90deg); }
+  .section-body { padding-top: 4px; margin-bottom: 10px; }
   h3 {
     color: var(--accent);
     border-bottom: 2px solid var(--border);
@@ -55,10 +141,11 @@
     margin: 30px 0 12px;
     font-size: 17px;
   }
+  /* ---------- cards ---------- */
   .rule {
-    background: var(--rule-bg);
+    background: var(--panel);
     border: 1px solid var(--border);
-    border-left: 4px solid var(--accent);
+    border-left: 4px solid var(--accent-deep);
     border-radius: 0 6px 6px 0;
     padding: 10px 16px;
     margin: 10px 0;
@@ -67,22 +154,38 @@
   .rule p { margin: 6px 0; }
   .rule ul { margin: 6px 0; padding-left: 22px; }
   .note {
-    background: #fff8e6;
-    border: 1px solid #e8d9a8;
+    background: #201d10;
+    border: 1px solid #585026;
     border-left: 4px solid #d4a017;
     border-radius: 0 6px 6px 0;
     padding: 10px 16px;
     margin: 10px 0;
   }
   .example { color: var(--muted); font-style: italic; }
+  /* ---------- print (light theme, everything expanded) ---------- */
   @media print {
-    body { padding: 0; max-width: none; font-size: 11pt; }
-    nav.toc { columns: 2; }
-    h2.section { page-break-after: avoid; break-after: avoid; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
-    h3 { page-break-after: avoid; }
-    .rule, .note { page-break-inside: avoid; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+    body { display: block; background: #fff; color: #1a1a1a; }
+    aside.sidenav { display: none !important; }
+    .page { padding: 0; max-width: none; font-size: 11pt; }
+    header.title h1, nav.toc h2, h3, .rule b.num { color: #2c5f2d; }
+    nav.toc { background: #f6f8f6; border-color: #d8ded8; columns: 2; }
+    nav.toc a, a { color: #1a1a1a; }
+    h2.section {
+      color: #fff; background: #2c5f2d; border: none; cursor: auto;
+      page-break-after: avoid; break-after: avoid;
+      -webkit-print-color-adjust: exact; print-color-adjust: exact;
+    }
+    h2.section::after { content: ""; }
+    .section-body { display: block !important; }
+    h3 { page-break-after: avoid; border-color: #d8ded8; }
+    .rule, .note {
+      page-break-inside: avoid;
+      -webkit-print-color-adjust: exact; print-color-adjust: exact;
+    }
+    .rule { background: #f6f8f6; border-color: #d8ded8; border-left-color: #2c5f2d; }
+    .note { background: #fff8e6; border-color: #e8d9a8; border-left-color: #d4a017; }
+    .example { color: #666; }
     .pb { page-break-before: always; }
-    a { color: var(--text); }
   }
 </style>
 </head>
@@ -947,5 +1050,91 @@
 </ul>
 </div>
 
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+  // Wrap existing content into .page and add the sidebar (presentation only,
+  // rule content is untouched).
+  var page = document.createElement("div");
+  page.className = "page";
+  while (document.body.firstChild) page.appendChild(document.body.firstChild);
+  var aside = document.createElement("aside");
+  aside.className = "sidenav";
+  document.body.appendChild(aside);
+  document.body.appendChild(page);
+
+  // Group each section's content into a collapsible .section-body.
+  var sections = Array.prototype.slice.call(page.querySelectorAll("h2.section"));
+  sections.forEach(function (h2) {
+    var body = document.createElement("div");
+    body.className = "section-body";
+    var n = h2.nextSibling;
+    while (n && !(n.nodeType === 1 && n.matches && n.matches("h2.section"))) {
+      var next = n.nextSibling;
+      body.appendChild(n);
+      n = next;
+    }
+    h2.parentNode.insertBefore(body, h2.nextSibling);
+    h2.addEventListener("click", function () { setOpen(h2, h2.classList.contains("collapsed")); });
+  });
+
+  function setOpen(h2, open) {
+    h2.classList.toggle("collapsed", !open);
+    var body = h2.nextElementSibling;
+    if (body && body.classList.contains("section-body")) body.style.display = open ? "" : "none";
+  }
+
+  // Collapsed by default — the page is long; top TOC / sidebar links auto-expand.
+  sections.forEach(function (h2) { setOpen(h2, false); });
+
+  // Sidebar: title, expand/collapse-all controls, section links.
+  aside.innerHTML =
+    '<div class="side-title">Правила проекта</div>' +
+    '<div class="nav-controls">' +
+    '<button type="button" id="expand-all">Развернуть все</button>' +
+    '<button type="button" id="collapse-all">Свернуть все</button>' +
+    "</div>";
+  var nav = document.createElement("nav");
+  aside.appendChild(nav);
+  sections.forEach(function (h2) {
+    var a = document.createElement("a");
+    a.href = "#" + h2.id;
+    a.textContent = h2.textContent;
+    nav.appendChild(a);
+  });
+  document.getElementById("expand-all").addEventListener("click", function () {
+    sections.forEach(function (h2) { setOpen(h2, true); });
+  });
+  document.getElementById("collapse-all").addEventListener("click", function () {
+    sections.forEach(function (h2) { setOpen(h2, false); });
+  });
+
+  // Any in-page anchor click (top TOC, sidebar, cross-references) expands its target.
+  document.addEventListener("click", function (e) {
+    var a = e.target.closest ? e.target.closest('a[href^="#"]') : null;
+    if (!a) return;
+    var target = document.getElementById(decodeURIComponent(a.getAttribute("href").slice(1)));
+    if (target && target.classList.contains("section")) setOpen(target, true);
+  });
+
+  // Highlight the section currently in view.
+  if ("IntersectionObserver" in window) {
+    var links = nav.querySelectorAll("a");
+    var observer = new IntersectionObserver(function (entries) {
+      entries.forEach(function (entry) {
+        if (!entry.isIntersecting) return;
+        links.forEach(function (l) { l.classList.remove("active"); });
+        var link = nav.querySelector('a[href="#' + entry.target.id + '"]');
+        if (link) link.classList.add("active");
+      });
+    }, { rootMargin: "0px 0px -60% 0px" });
+    sections.forEach(function (h2) { observer.observe(h2); });
+  }
+
+  // Printing always gets the full document.
+  window.addEventListener("beforeprint", function () {
+    sections.forEach(function (h2) { setOpen(h2, true); });
+  });
+});
+</script>
 </body>
 </html>
