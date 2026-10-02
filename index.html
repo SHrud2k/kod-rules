@@ -181,7 +181,10 @@
     border-radius: 10px;
     padding: 1px 10px;
     white-space: nowrap;
+    text-decoration: none;
+    cursor: pointer;
   }
+  .upd-count:hover { background: #ffc94d; }
   aside.sidenav nav a .dot {
     display: inline-block;
     width: 8px;
@@ -341,6 +344,7 @@
 <li>Удалены: 1.1.8 (нетрезвое состояние), 6.1.8 (ежемесячные собрания — перенесено в памятку кураторов).</li>
 <li>Разделы 4.2–4.5 разделены на четыре самостоятельных; в раздел рангов добавлены изображения шевронов.</li>
 </ul>
+<p><a href="changes.html">Полный список изменений с текстами «до и после» →</a></p>
 </div>
 
 <!-- ============================================================ 1.1 -->
@@ -1274,13 +1278,17 @@ document.addEventListener("DOMContentLoaded", function () {
     nav.appendChild(a);
   });
 
-  // Section headers show how many rules inside were recently changed.
+  // Section headers show how many rules inside were recently changed;
+  // the chip links to the before/after page for that section.
   Object.keys(updatedSections).forEach(function (id) {
     var h2sec = document.getElementById(id);
     if (!h2sec) return;
-    var chip = document.createElement("span");
+    var chip = document.createElement("a");
     chip.className = "upd-count";
     chip.textContent = updatedSections[id] + " обнов.";
+    chip.href = "changes.html#chg-" + id;
+    chip.title = "Показать изменения: до и после";
+    chip.addEventListener("click", function (e) { e.stopPropagation(); });
     h2sec.appendChild(chip);
   });
   document.getElementById("expand-all").addEventListener("click", function () {
