@@ -162,6 +162,18 @@
     margin: 10px 0;
   }
   .example { color: var(--muted); font-style: italic; }
+  .chevron {
+    float: right;
+    margin: 4px 0 10px 16px;
+    text-align: center;
+  }
+  .chevron img {
+    display: block;
+    height: 220px;
+    border-radius: 8px;
+    border: 1px solid var(--border);
+  }
+  .section-body::after { content: ""; display: block; clear: both; }
   /* ---------- print (light theme, everything expanded) ---------- */
   @media print {
     body { display: block; background: #fff; color: #1a1a1a; }
@@ -999,12 +1011,14 @@
 
 <h3>Шеврон Сталкера</h3>
 <div class="rule">
+<span class="chevron"><img src="images/chevron-stalker.png" alt="Шеврон Сталкера" loading="lazy"></span>
 <p>Шеврон Сталкера — это начальный шеврон персонажа на проекте, который только начинает свой путь в Зоне, либо недостаточно опытен для получения звания Опытный/Ветеран.</p>
 <p>Перед игрой на сервере вам нужно ознакомиться с правилами, но для удобства выделены главные ограничения для вашего шеврона: 1.2.19, 2.4.2, 2.4.3, 3.1.5.1, 4.4 «Зеленая Зона».</p>
 </div>
 
 <h3>Шеврон Вольного Сталкера</h3>
 <div class="rule">
+<span class="chevron"><img src="images/chevron-volny.png" alt="Шеврон Вольного Сталкера" loading="lazy"></span>
 <p>Выдаётся сталкерам, которые провели на сервере более 1 месяца. Стартовый набор становится более продвинутым, при этом количество мест для выдачи шевронов ограничено.</p>
 <p>Для получения данного ранга необходимо:</p>
 <ul>
@@ -1017,6 +1031,7 @@
 
 <h3>Шеврон Опытного Сталкера</h3>
 <div class="rule">
+<span class="chevron"><img src="images/chevron-opytny.png" alt="Шеврон Опытного Сталкера" loading="lazy"></span>
 <p>Выдаётся сталкерам, которые провели на сервере более 4 месяцев. При получении шеврона ваш спавн переносится в Бар «100 Рентген», а стартовый набор становится более продвинутым. Количество мест для выдачи шеврона ограничено, поэтому стоит проявлять активность на сервере. Также изменяется статус игрока: эквивалент «ПГ» повышается до уровня двух бойцов.</p>
 <p>Для получения данного ранга необходимо:</p>
 <ul>
@@ -1035,6 +1050,7 @@
 
 <h3>Шеврон Ветерана</h3>
 <div class="rule">
+<span class="chevron"><img src="images/chevron-veteran.png" alt="Шеврон Ветерана" loading="lazy"></span>
 <p>Выдается Опытным сталкерам, которые провели на сервере более 6 месяцев. При получении шеврона ваш спавн переносится на одну из двух локаций: Станция «Янов» или Бар «100 Рентген». Стартовый набор при этом становится ещё более продвинутым. Количество мест для выдачи шеврона ограничено, поэтому стоит проявлять активность на сервере. Также изменяется статус игрока: эквивалент «ПГ» повышается до уровня 3 бойцов.</p>
 <p>Для получения шеврона Ветерана необходимо:</p>
 <ul>
@@ -1129,6 +1145,18 @@ document.addEventListener("DOMContentLoaded", function () {
     }, { rootMargin: "0px 0px -60% 0px" });
     sections.forEach(function (h2) { observer.observe(h2); });
   }
+
+  // Opening the page with #section in the URL expands and scrolls to it.
+  function openFromHash() {
+    if (!location.hash) return;
+    var target = document.getElementById(decodeURIComponent(location.hash.slice(1)));
+    if (target && target.classList.contains("section")) {
+      setOpen(target, true);
+      target.scrollIntoView();
+    }
+  }
+  openFromHash();
+  window.addEventListener("hashchange", openFromHash);
 
   // Printing always gets the full document.
   window.addEventListener("beforeprint", function () {

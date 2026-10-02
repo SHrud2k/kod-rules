@@ -1,6 +1,8 @@
 # Ignore everything...
 *
 
-# ...except the rules page and this file
+# ...except the rules page, its images, and this file
 !.gitignore
 !index.html
+!images/
+!images/*.png
