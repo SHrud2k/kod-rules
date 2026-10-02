@@ -100,12 +100,30 @@
     background: var(--panel);
     border: 1px solid var(--border);
     border-radius: 8px;
-    padding: 18px 26px;
+    padding: 18px 22px 22px;
     margin-bottom: 36px;
-    columns: 2;
-    column-gap: 40px;
   }
-  nav.toc h2 { margin: 0 0 10px; font-size: 16px; column-span: all; color: var(--heading); }
+  nav.toc h2 { margin: 0 0 14px; font-size: 16px; color: var(--heading); }
+  nav.toc .toc-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+    gap: 12px;
+  }
+  nav.toc .toc-group {
+    background: var(--panel-2);
+    border: 1px solid var(--border);
+    border-left: 3px solid var(--accent);
+    border-radius: 6px;
+    padding: 10px 14px;
+  }
+  nav.toc .toc-group b {
+    display: block;
+    color: var(--heading);
+    font-size: 13px;
+    text-transform: uppercase;
+    letter-spacing: .5px;
+    margin-bottom: 6px;
+  }
   nav.toc a { display: block; color: var(--link); text-decoration: none; padding: 2px 0; font-size: 14px; }
   nav.toc a:hover { text-decoration: underline; }
   /* ---------- collapsible sections ---------- */
@@ -128,8 +146,16 @@
   h2.section:hover { background: var(--panel-2); }
   h2.section::after {
     content: "▾";
-    color: var(--muted);
+    color: var(--heading);
+    background: var(--panel-2);
+    border: 1px solid var(--border);
+    border-radius: 50%;
+    width: 28px;
+    height: 28px;
+    line-height: 26px;
+    text-align: center;
     font-size: 15px;
+    flex: 0 0 28px;
     transition: transform .15s ease;
   }
   h2.section.collapsed::after { transform: rotate(-90deg); }
@@ -147,9 +173,16 @@
     border: 1px solid var(--border);
     border-left: 4px solid var(--accent);
     border-radius: 0 6px 6px 0;
-    padding: 10px 16px;
-    margin: 10px 0;
+    padding: 12px 18px;
+    margin: 10px 0 10px 22px;
+    line-height: 1.62;
+    font-size: 15px;
   }
+  /* sub-points (1.2.14.1, 4.3.1, …) sit one level deeper than their parent */
+  .rule.lvl1 { margin-left: 50px; }
+  .rule.lvl2 { margin-left: 78px; border-left-color: var(--accent-deep); }
+  .section-body > .note { margin-left: 22px; }
+  .section-body > h3 { margin-left: 22px; }
   .rule b.num { color: var(--accent-text); }
   .rule p { margin: 6px 0; }
   .rule ul { margin: 6px 0; padding-left: 22px; }
@@ -214,30 +247,50 @@
 
 <nav class="toc">
   <h2>Содержание</h2>
-  <a href="#s1-1">1.1 Общие положения</a>
-  <a href="#s1-2">1.2 RP и NonRP</a>
-  <a href="#s1-3">1.3 Leave RolePlay</a>
-  <a href="#s1-4">1.4 AFK</a>
-  <a href="#s1-5">1.5 NLR</a>
-  <a href="#s1-6">1.6 PG</a>
-  <a href="#s1-7">1.7 Meta</a>
-  <a href="#s1-8">1.8 RDM</a>
-  <a href="#s1-9">1.9 Взаимодействие с ТС</a>
-  <a href="#s2-1">2.1 – 2.2 Правила РП фото и видео</a>
-  <a href="#s2-3">2.3 Правила КПЗ</a>
-  <a href="#s2-4">2.4 Правила гоп-стопа</a>
-  <a href="#s2-5">2.5 Правила опознания личности</a>
-  <a href="#s3-1">3.1 Правила рейдов</a>
-  <a href="#s4-1">4.1 Правила РП смерти</a>
-  <a href="#s4-2">4.2 Правила РП казни</a>
-  <a href="#s4-3">4.3 Порядок проведения казни</a>
-  <a href="#s4-4">4.4 Правила Зелёных Зон</a>
-  <a href="#s4-5">4.5 Провокации и открытие ЗЗ</a>
-  <a href="#s5-1">5. Правила ношения системы «КРИЗ»</a>
-  <a href="#s6">6. Правила группировок</a>
-  <a href="#s7-1">7. Правила дезертирства</a>
-  <a href="#sgroups">Правила конкретных группировок</a>
-  <a href="#sranks">Сталкерские ранги и шевроны</a>
+  <div class="toc-grid">
+    <div class="toc-group">
+      <b>1. Основы и термины</b>
+      <a href="#s1-1">1.1 Общие положения</a>
+      <a href="#s1-2">1.2 RP и NonRP</a>
+      <a href="#s1-3">1.3 Leave RolePlay</a>
+      <a href="#s1-4">1.4 AFK</a>
+      <a href="#s1-5">1.5 NLR</a>
+      <a href="#s1-6">1.6 PG</a>
+      <a href="#s1-7">1.7 Meta</a>
+      <a href="#s1-8">1.8 RDM</a>
+      <a href="#s1-9">1.9 Взаимодействие с ТС</a>
+    </div>
+    <div class="toc-group">
+      <b>2. Игровые процедуры</b>
+      <a href="#s2-1">2.1 РП фото и видео</a>
+      <a href="#s2-3">2.3 КПЗ, плен и допрос</a>
+      <a href="#s2-4">2.4 Гоп-стоп</a>
+      <a href="#s2-5">2.5 Опознание личности</a>
+    </div>
+    <div class="toc-group">
+      <b>3. Рейды</b>
+      <a href="#s3-1">3.1 Правила рейдов</a>
+    </div>
+    <div class="toc-group">
+      <b>4. Смерть и Зелёные Зоны</b>
+      <a href="#s4-1">4.1 РП смерть</a>
+      <a href="#s4-2">4.2 РП казнь — причины</a>
+      <a href="#s4-3">4.3 РП казнь — порядок</a>
+      <a href="#s4-4">4.4 Зелёные Зоны</a>
+      <a href="#s4-5">4.5 Провокации и открытие ЗЗ</a>
+    </div>
+    <div class="toc-group">
+      <b>5–7. Группировки</b>
+      <a href="#s5-1">5. Система «КРИЗ»</a>
+      <a href="#s6">6. Правила группировок</a>
+      <a href="#s7-1">7. Дезертирство</a>
+    </div>
+    <div class="toc-group">
+      <b>Справочное</b>
+      <a href="#sgroups">Правила конкретных группировок</a>
+      <a href="#sranks">Сталкерские ранги и шевроны</a>
+    </div>
+  </div>
 </nav>
 
 <!-- ============================================================ 1.1 -->
@@ -549,17 +602,14 @@
 <p><b>Запрещено:</b> наносить любые повреждения транспортному средству в ходе проведения рейда; уничтожать или повреждать технику за пределами ЗЗ, если экипаж добровольно сдался или покинул транспортное средство; производить демонтаж запчастей без соблюдения установленных правил и условий.</p></div>
 
 <!-- ============================================================ 2.1 -->
-<h2 class="section pb" id="s2-1">2.1 – 2.2 Правила РП фото и видео</h2>
+<h2 class="section pb" id="s2-1">2.1 Правила РП фото и видео</h2>
 
-<div class="rule"><p><b class="num">2.1</b> РП-фото/видео действительны, если сняты на КПК или GoPro (в руках либо в слоте рюкзака) с батарейкой внутри. При тяжёлом ранении включённая запись теряется и не может быть использована.</p>
+<div class="rule"><p><b class="num">2.1</b> РП-фото/видео действительны, если сняты на КПК или GoPro (в руках либо в слоте рюкзака) с батарейкой внутри. При тяжёлом ранении включённая запись теряется и не может быть использована. Правило НЕ касается записей, сделанных для предоставления администрации при разборе ситуаций и жалобах.</p>
 <p>Как сделать РП-фото: нажмите «Ё», затем зажмите её до исчезновения значков, возьмите КПК в руки, зажмите ПКМ и нажмите F12 (или вашу клавишу скриншота).</p></div>
 
 <div class="rule"><p><b class="num">2.1.1</b> РП фото и видео может быть передано через дискорд ввиду невозможности их передачи внутри-игровыми способами. Для передачи РП фото и видео персонажи должны находиться в непосредственной близости друг с другом.</p></div>
 
 <div class="rule"><p><b class="num">2.1.2</b> При тяжелом ранении вся ваша информация (РП-фото, видео) с КПК теряется.</p></div>
-
-<div class="rule"><p><b class="num">2.2</b> Правило РП Видео и Фото НЕ КАСАЕТСЯ записи видео для предоставления администрации при разборе ситуаций, жалобах.</p></div>
-
 <!-- ============================================================ 2.3 -->
 <h2 class="section" id="s2-3">2.3 Правила КПЗ</h2>
 
@@ -1072,6 +1122,21 @@ document.addEventListener("DOMContentLoaded", function () {
     }
     h2.parentNode.insertBefore(body, h2.nextSibling);
     h2.addEventListener("click", function () { setOpen(h2, h2.classList.contains("collapsed")); });
+
+    // Indent sub-points one level deeper than the shallowest rule number
+    // in the section (e.g. 1.2.14.1 under 1.2.14, 4.3.1 under 4.3).
+    var rules = Array.prototype.slice.call(body.querySelectorAll(".rule"));
+    var depths = rules.map(function (r) {
+      var num = r.querySelector("b.num");
+      return num ? num.textContent.trim().replace(/\.$/, "").split(".").length : 0;
+    });
+    var withNum = depths.filter(function (d) { return d > 0; });
+    if (withNum.length) {
+      var base = Math.min.apply(null, withNum);
+      rules.forEach(function (r, i) {
+        if (depths[i] > base) r.classList.add(depths[i] - base >= 2 ? "lvl2" : "lvl1");
+      });
+    }
   });
 
   function setOpen(h2, open) {
