@@ -241,7 +241,7 @@
 
 <header class="title">
   <h1>Правила проекта</h1>
-  <div class="sub">Kill OR Die DayZ | RP &nbsp;·&nbsp; экспорт из Discord-канала #правила-проекта &nbsp;·&nbsp; 02.10.2026</div>
+  <div class="sub">Kill OR Die DayZ | RP &nbsp;·&nbsp; Последнее обновление: <span id="last-updated">02.10.2026</span></div>
 </header>
 
 <nav class="toc">
@@ -1098,6 +1098,17 @@
 
 <script>
 document.addEventListener("DOMContentLoaded", function () {
+  // "Last updated" auto-fills from the file's Last-Modified date (deploy time
+  // on GitHub Pages), so it never needs manual bumping. Static text is the fallback.
+  try {
+    var mod = new Date(document.lastModified);
+    if (!isNaN(mod)) {
+      var dd = String(mod.getDate()).padStart(2, "0");
+      var mm = String(mod.getMonth() + 1).padStart(2, "0");
+      document.getElementById("last-updated").textContent = dd + "." + mm + "." + mod.getFullYear();
+    }
+  } catch (e) {}
+
   // Wrap existing content into .page and add the sidebar (presentation only,
   // rule content is untouched).
   var page = document.createElement("div");
