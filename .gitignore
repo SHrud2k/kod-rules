@@ -1,9 +1,11 @@
 # Ignore everything...
 *
 
-# ...except the rules page, the changes page, images, and this file
+# ...except the rules page, the changes page, content data, images, and this file
 !.gitignore
 !index.html
 !changes.html
+!data/
+!data/*.json
 !images/
 !images/*.png
