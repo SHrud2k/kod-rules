@@ -5,6 +5,7 @@
 !.gitignore
 !index.html
 !changes.html
+!CNAME
 !data/
 !data/*.json
 !images/
