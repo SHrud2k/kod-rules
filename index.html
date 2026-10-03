@@ -70,6 +70,8 @@
     cursor: pointer;
   }
   .nav-controls button:hover { background: var(--accent-deep); }
+  .nav-controls button.secondary { background: var(--panel-2); color: var(--muted); border: 1px solid var(--border); }
+  .nav-controls button.secondary:hover { color: var(--text); border-color: var(--accent); background: var(--panel-2); }
   aside.sidenav nav a {
     display: block;
     color: var(--muted);
@@ -222,6 +224,11 @@
   .section-body > .note { margin-left: 22px; }
   .section-body > h3 { margin-left: 22px; }
   .rule b.num { color: var(--accent-text); }
+  .rule a, .note a { color: var(--link); text-decoration: none; }
+  .rule a:hover, .note a:hover { text-decoration: underline; }
+  a.rref { color: var(--accent-text); text-decoration: underline dotted; text-underline-offset: 3px; }
+  a.rref:hover { color: var(--heading); text-decoration: underline; }
+  .rule:target { border-left-color: var(--accent-text); box-shadow: 0 0 0 1px var(--accent-deep); }
   .rule p { margin: 6px 0; }
   .rule ul { margin: 6px 0; padding-left: 22px; }
   .note {
@@ -237,6 +244,7 @@
   .rule th, .rule td { border: 1px solid var(--border); padding: 6px 12px; text-align: left; font-size: 14px; }
   .rule th { background: var(--panel-2); color: var(--heading); }
   .rule td.hl { color: #f0b232; font-weight: 600; }
+  .rule::after { content: ""; display: block; clear: both; }
   .chevron {
     float: right;
     margin: 4px 0 10px 16px;
@@ -299,6 +307,28 @@
   }
 
   function render(meta, rules, changelog) {
+    // Every rule number mentioned in a text becomes a link to that rule.
+    var numSet = {};
+    rules.sections.forEach(function (sec) {
+      sec.content.forEach(function (c) { if (c.num) numSet[c.num] = true; });
+    });
+    function linkifyRefs(html, selfNum) {
+      var PLACEHOLDER = "@@NUMLEAD@@";
+      var lead = '<b class="num">' + selfNum + "</b>";
+      var hasLead = selfNum && html.indexOf(lead) !== -1;
+      if (hasLead) html = html.replace(lead, PLACEHOLDER);
+      html = html.replace(/\d+(?:\.\d+)+/g, function (m, off) {
+        var prev = html.charAt(off - 1);
+        var next = html.charAt(off + m.length);
+        if (prev && /[\d."'=#-]/.test(prev)) return m;
+        if (next === "." && /\d/.test(html.charAt(off + m.length + 1))) return m;
+        if (!numSet[m] || m === selfNum) return m;
+        return '<a class="rref" href="#r' + m.replace(/\./g, "-") + '">' + m + "</a>";
+      });
+      if (hasLead) html = html.replace(PLACEHOLDER, lead);
+      return html;
+    }
+
     var out = [];
     out.push('<header class="title"><h1>' + meta.title + '</h1><div class="sub">' +
       meta.project + ' &nbsp;·&nbsp; ' + meta.updatedLabel + ': <span id="last-updated">' +
@@ -327,8 +357,11 @@
       out.push('<h2 class="section' + (sec.pageBreak ? ' pb' : '') + '" id="' + sec.id + '">' + sec.title + '</h2>');
       sec.content.forEach(function (c) {
         if (c.type === 'h3') out.push('<h3>' + c.text + '</h3>');
-        else if (c.type === 'note') out.push('<div class="note">' + c.html + '</div>');
-        else out.push('<div class="rule"' + (c.updated ? ' data-updated="' + c.updated + '"' : '') + '>' + c.html + '</div>');
+        else if (c.type === 'note') out.push('<div class="note">' + linkifyRefs(c.html, null) + '</div>');
+        else out.push('<div class="rule"' +
+          (c.num ? ' id="r' + c.num.replace(/\./g, '-') + '"' : '') +
+          (c.updated ? ' data-updated="' + c.updated + '"' : '') +
+          '>' + linkifyRefs(c.html, c.num || null) + '</div>');
       });
     });
 
@@ -394,11 +427,11 @@
     sections.forEach(function (h2) { setOpen(h2, false); });
 
     // ----- "recently changed" highlighting -----
-    var HIGHLIGHT_DAYS = 14;
+    var HIGHLIGHT_DAYS = 7;
     var updatedSections = {};
     (function () {
       var now = new Date();
-      var baseline = "";
+      var baseline = "", readAtStr = "";
       try {
         baseline = sessionStorage.getItem("rulesVisitBaseline");
         if (baseline === null) {
@@ -406,14 +439,22 @@
           sessionStorage.setItem("rulesVisitBaseline", baseline);
         }
         localStorage.setItem("rulesLastVisit", now.toISOString());
+        readAtStr = localStorage.getItem("rulesReadAt") || "";
       } catch (e) { baseline = ""; }
       var lastVisit = baseline ? new Date(baseline) : null;
+      // compare by day: updates are dated at midnight, so a same-day visit
+      // must not hide them
+      var baselineDay = lastVisit && !isNaN(lastVisit)
+        ? new Date(lastVisit.getFullYear(), lastVisit.getMonth(), lastVisit.getDate())
+        : null;
+      var readAt = readAtStr ? new Date(readAtStr) : null;
 
       Array.prototype.slice.call(page.querySelectorAll("[data-updated]")).forEach(function (el) {
         var d = new Date(el.getAttribute("data-updated") + "T00:00:00");
         if (isNaN(d)) return;
+        if (readAt && !isNaN(readAt) && d <= readAt) return; // dismissed via "mark as read"
         var recent = (now - d) / 86400000 <= HIGHLIGHT_DAYS;
-        var isNew = lastVisit && !isNaN(lastVisit) && d > lastVisit;
+        var isNew = baselineDay && d >= baselineDay;
         if (!recent && !isNew) return;
         el.classList.add("updated");
         var badge = document.createElement("span");
@@ -475,12 +516,37 @@
       h2sec.appendChild(chip);
     });
 
-    // Any in-page anchor click (TOC, sidebar, cross-references) expands its target.
+    // "Mark all as read": hides every change marker and remembers it per browser.
+    if (Object.keys(updatedSections).length) {
+      var mr = document.createElement("div");
+      mr.className = "nav-controls";
+      mr.innerHTML = '<button type="button" id="mark-read" class="secondary" title="Скрыть отметки об изменениях">Отметить всё прочитанным</button>';
+      var controls = aside.querySelector(".nav-controls");
+      controls.parentNode.insertBefore(mr, controls.nextSibling);
+      mr.querySelector("button").addEventListener("click", function () {
+        try { localStorage.setItem("rulesReadAt", new Date().toISOString()); } catch (e) {}
+        Array.prototype.slice.call(document.querySelectorAll(".badge-upd, .badge-new, .upd-count, aside.sidenav .dot")).forEach(function (x) { x.parentNode.removeChild(x); });
+        Array.prototype.slice.call(document.querySelectorAll(".rule.updated")).forEach(function (x) { x.classList.remove("updated"); });
+        mr.parentNode.removeChild(mr);
+      });
+    }
+
+    // Any in-page anchor click (TOC, sidebar, cross-references) expands its
+    // target — a section, or the section containing a referenced rule.
+    function revealTarget(target) {
+      if (!target) return false;
+      if (target.classList.contains("section")) { setOpen(target, true); return true; }
+      var body = target.closest(".section-body");
+      if (body && body.previousElementSibling) {
+        setOpen(body.previousElementSibling, true);
+        return true;
+      }
+      return false;
+    }
     document.addEventListener("click", function (e) {
       var a = e.target.closest ? e.target.closest('a[href^="#"]') : null;
       if (!a) return;
-      var target = document.getElementById(decodeURIComponent(a.getAttribute("href").slice(1)));
-      if (target && target.classList.contains("section")) setOpen(target, true);
+      revealTarget(document.getElementById(decodeURIComponent(a.getAttribute("href").slice(1))));
     });
 
     // Highlight the section currently in view.
@@ -497,14 +563,11 @@
       sections.forEach(function (h2) { observer.observe(h2); });
     }
 
-    // Opening the page with #section in the URL expands and scrolls to it.
+    // Opening the page with #section or #rule in the URL expands and scrolls to it.
     function openFromHash() {
       if (!location.hash) return;
       var target = document.getElementById(decodeURIComponent(location.hash.slice(1)));
-      if (target && target.classList.contains("section")) {
-        setOpen(target, true);
-        target.scrollIntoView();
-      }
+      if (revealTarget(target)) target.scrollIntoView();
     }
     openFromHash();
     window.addEventListener("hashchange", openFromHash);
