@@ -12,3 +12,5 @@
 !data/*.json
 !images/
 !images/*.png
+!images/*.webp
+!favicon.ico
