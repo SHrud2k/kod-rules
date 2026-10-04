@@ -3,6 +3,13 @@
 <head>
 <meta charset="utf-8">
 <title>Правила проекта — Kill OR Die DayZ | RP</title>
+<script>
+  // Clean URL in the address bar: /index.html -> /, /changes.html -> /changes.
+  // Skipped on file:// so local preview keeps working.
+  if (location.protocol !== "file:" && /\.html$/.test(location.pathname)) {
+    history.replaceState(null, "", location.pathname.replace(/(?:index)?\.html$/, "") + location.search + location.hash);
+  }
+</script>
 <style>
   :root {
     /* Discord dark theme palette */

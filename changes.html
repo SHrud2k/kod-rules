@@ -3,6 +3,13 @@
 <head>
 <meta charset="utf-8">
 <title>Изменения правил — до/после | Kill OR Die DayZ | RP</title>
+<script>
+  // Clean URL in the address bar: /index.html -> /, /changes.html -> /changes.
+  // Skipped on file:// so local preview keeps working.
+  if (location.protocol !== "file:" && /\.html$/.test(location.pathname)) {
+    history.replaceState(null, "", location.pathname.replace(/(?:index)?\.html$/, "") + location.search + location.hash);
+  }
+</script>
 <style>
   :root {
     --bg: #313338; --panel: #2b2d31; --panel-2: #383a40;
