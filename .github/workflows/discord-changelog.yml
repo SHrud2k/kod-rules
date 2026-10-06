@@ -1,0 +1,32 @@
+name: Discord changelog announce
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - data/changelog.json
+  workflow_dispatch:
+    inputs:
+      entry_index:
+        description: "Index into changelog entries[] to post (0 = latest). Use this to re-send manually if the automatic post failed."
+        required: false
+        default: "0"
+
+permissions:
+  contents: read
+
+jobs:
+  announce:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Post changelog entry to Discord
+        env:
+          DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
+          ENTRY_INDEX: ${{ github.event.inputs.entry_index || '0' }}
+        run: python -X utf8 tools/discord_announce.py
