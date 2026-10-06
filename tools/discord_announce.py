@@ -33,6 +33,27 @@ def clean(item):
     return html.unescape(item)
 
 
+def post_webhook(webhook_url, payload, label):
+    body = json.dumps(payload, ensure_ascii=False).encode("utf-8")
+    req = urllib.request.Request(
+        webhook_url,
+        data=body,
+        headers={
+            "Content-Type": "application/json; charset=utf-8",
+            # Discord's edge (Cloudflare) 403s the default Python-urllib UA string.
+            "User-Agent": "Mozilla/5.0 (compatible; kod-rules-changelog-bot/1.0; +https://github.com/SHrud2k/kod-rules)",
+        },
+        method="POST",
+    )
+    try:
+        with urllib.request.urlopen(req) as resp:
+            print(f"Discord webhook responded with status {resp.status} for {label}.")
+    except urllib.error.HTTPError as e:
+        detail = e.read().decode("utf-8", errors="replace")
+        print(f"Discord webhook failed ({label}): HTTP {e.code} {e.reason} — {detail}", file=sys.stderr)
+        sys.exit(1)
+
+
 def main():
     webhook_url = os.environ.get("DISCORD_WEBHOOK_URL")
     if not webhook_url:
@@ -54,9 +75,11 @@ def main():
     if len(description) > 4000:
         description = description[:4000].rsplit("\n", 1)[0] + "\n• …"
 
-    payload = {
+    announce_payload = {
         "username": "Kill OR Die | Правила",
         "avatar_url": ICON_URL,
+        "content": "@everyone\n**Уважаемые игроки сервера!**",
+        "allowed_mentions": {"parse": ["everyone"]},
         "embeds": [
             {
                 "title": f"📝 Обновление правил — {date}",
@@ -73,25 +96,14 @@ def main():
             }
         ],
     }
+    post_webhook(webhook_url, announce_payload, f"entry {date}")
 
-    body = json.dumps(payload, ensure_ascii=False).encode("utf-8")
-    req = urllib.request.Request(
-        webhook_url,
-        data=body,
-        headers={
-            "Content-Type": "application/json; charset=utf-8",
-            # Discord's edge (Cloudflare) 403s the default Python-urllib UA string.
-            "User-Agent": "Mozilla/5.0 (compatible; kod-rules-changelog-bot/1.0; +https://github.com/SHrud2k/kod-rules)",
-        },
-        method="POST",
-    )
-    try:
-        with urllib.request.urlopen(req) as resp:
-            print(f"Discord webhook responded with status {resp.status} for entry {date}.")
-    except urllib.error.HTTPError as e:
-        detail = e.read().decode("utf-8", errors="replace")
-        print(f"Discord webhook failed: HTTP {e.code} {e.reason} — {detail}", file=sys.stderr)
-        sys.exit(1)
+    closing_payload = {
+        "username": "Kill OR Die | Правила",
+        "avatar_url": ICON_URL,
+        "content": "Приятной игры!",
+    }
+    post_webhook(webhook_url, closing_payload, "closing message")
 
 
 if __name__ == "__main__":
