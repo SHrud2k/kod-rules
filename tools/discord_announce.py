@@ -92,18 +92,11 @@ def main():
                         "inline": False,
                     }
                 ],
-                "footer": {"text": "Незнание правил не освобождает от ответственности."},
+                "footer": {"text": "Приятной игры! · Незнание правил не освобождает от ответственности."},
             }
         ],
     }
     post_webhook(webhook_url, announce_payload, f"entry {date}")
-
-    closing_payload = {
-        "username": "Kill OR Die | Правила",
-        "avatar_url": ICON_URL,
-        "content": "Приятной игры!",
-    }
-    post_webhook(webhook_url, closing_payload, "closing message")
 
 
 if __name__ == "__main__":
