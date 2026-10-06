@@ -78,14 +78,19 @@ def main():
     req = urllib.request.Request(
         webhook_url,
         data=body,
-        headers={"Content-Type": "application/json; charset=utf-8"},
+        headers={
+            "Content-Type": "application/json; charset=utf-8",
+            # Discord's edge (Cloudflare) 403s the default Python-urllib UA string.
+            "User-Agent": "Mozilla/5.0 (compatible; kod-rules-changelog-bot/1.0; +https://github.com/SHrud2k/kod-rules)",
+        },
         method="POST",
     )
     try:
         with urllib.request.urlopen(req) as resp:
             print(f"Discord webhook responded with status {resp.status} for entry {date}.")
     except urllib.error.HTTPError as e:
-        print(f"Discord webhook failed: HTTP {e.code} {e.reason}", file=sys.stderr)
+        detail = e.read().decode("utf-8", errors="replace")
+        print(f"Discord webhook failed: HTTP {e.code} {e.reason} — {detail}", file=sys.stderr)
         sys.exit(1)
 
 
